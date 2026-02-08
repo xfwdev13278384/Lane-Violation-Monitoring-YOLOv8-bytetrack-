@@ -1,0 +1,5 @@
+video,run_id,track_id,vehicle_class,frame_id,lane,image_path
+main,run_20260129_142423,22,car,158,MOTOR,core/outputs\main\run_20260129_142423\images\id22_f158.jpg
+main,run_20260129_142423,27,motorcycle,175,CAR,core/outputs\main\run_20260129_142423\images\id27_f175.jpg
+main,run_20260129_142423,30,car,247,MOTOR,core/outputs\main\run_20260129_142423\images\id30_f247.jpg
+main,run_20260129_142423,39,car,298,MOTOR,core/outputs\main\run_20260129_142423\images\id39_f298.jpg

@@ -1,0 +1,285 @@
+<div class="hero-slider">
+  <div class="swiper heroSwiper">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <div class="slide-content">
+          <div class="container">
+            <div class="row align-items-center">
+              <div class="col-lg-6">
+                <div class="slide-text animate__animated animate__fadeInLeft">
+                  <h2 class="slide-title">🛡️ HỆ THỐNG GIÁM SÁT THÔNG MINH</h2>
+                  <p class="slide-description">
+                    Ứng dụng mô hình Deep Learning để phát hiện vi phạm làn
+                    đường
+                  </p>
+                  <div class="slide-actions">
+                    <a href="/violations" class="btn btn-warning btn-lg">
+                      <i class="fas fa-list"></i> Xem vi phạm
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="slide-image animate__animated animate__fadeInRight">
+                  <i class="fas fa-shield-alt fa-10x"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="swiper-slide">
+        <div
+          class="slide-content"
+          style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)"
+        >
+          <div class="container">
+            <div class="row align-items-center">
+              <div class="col-lg-6">
+                <div class="slide-text animate__animated animate__fadeInLeft">
+                  <h2 class="slide-title">📊 THỐNG KÊ PHÂN TÍCH CHI TIẾT</h2>
+                  <p class="slide-description">
+                    Hệ thống cung cấp báo cáo và phân tích dữ liệu vi phạm theo
+                    thời gian thực, giúp quản lý hiệu quả
+                  </p>
+                  <div class="slide-actions">
+                    <a href="/statistics" class="btn btn-light btn-lg">
+                      <i class="fas fa-chart-bar"></i> Xem Thống Kê
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="slide-image animate__animated animate__fadeInRight">
+                  <i class="fas fa-chart-line fa-10x"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="swiper-slide">
+        <div
+          class="slide-content"
+          style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%)"
+        >
+          <div class="container">
+            <div class="row align-items-center">
+              <div class="col-lg-6">
+                <div class="slide-text animate__animated animate__fadeInLeft">
+                  <h2 class="slide-title">🤖 CÔNG NGHỆ AI TỐI TÂN</h2>
+                  <p class="slide-description">
+                    Mô hình với độ chính xác 95%, xử lý realtime, tự động phân
+                    loại và cảnh báo vi phạm tức thời
+                  </p>
+                  <div class="slide-actions"></div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="slide-image animate__animated animate__fadeInRight">
+                  <i class="fas fa-brain fa-10x"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+
+    <div class="swiper-pagination"></div>
+  </div>
+</div>
+
+<style>
+  .hero-slider {
+    margin-bottom: 2rem;
+  }
+
+  .swiper {
+    width: 100%;
+    height: 280px;
+  }
+
+  .swiper-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .slide-content {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: none;
+    box-shadow: inset 0 0 100px rgba(255, 255, 255, 0.1);
+  }
+
+  .slide-text {
+    padding: 0.5rem 0;
+  }
+
+  .slide-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+    color: white;
+    letter-spacing: -0.5px;
+  }
+
+  .slide-description {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    color: rgba(255, 255, 255, 0.95);
+    line-height: 1.6;
+  }
+
+  .slide-actions .btn {
+    border-radius: 50px;
+    padding: 0.5rem 1.2rem;
+    font-weight: 600;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .slide-actions .btn-light {
+    background: white;
+    border: none;
+    color: var(--primary-color);
+  }
+
+  .slide-actions .btn-light:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.95);
+  }
+
+  .slide-actions .btn-outline-light {
+    border: 2px solid white;
+    color: white;
+  }
+
+  .slide-actions .btn-outline-light:hover {
+    transform: translateY(-3px);
+    background: white;
+    color: var(--primary-color);
+    box-shadow: 0 6px 25px rgba(255, 255, 255, 0.4);
+  }
+
+  .slide-image {
+    text-align: center;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .slide-image i {
+    color: white;
+    opacity: 0.9;
+    filter: drop-shadow(0 10px 30px rgba(255, 255, 255, 0.3));
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    transition: all 0.3s;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+  }
+
+  .swiper-button-next:hover,
+  .swiper-button-prev:hover {
+    background: white;
+    color: var(--primary-color);
+    transform: scale(1.1);
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.5);
+    border-color: white;
+  }
+
+  .swiper-button-next::after,
+  .swiper-button-prev::after {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .swiper-pagination-bullet {
+    width: 12px;
+    height: 12px;
+    background: white;
+    opacity: 0.5;
+  }
+
+  .swiper-pagination-bullet-active {
+    opacity: 1;
+    width: 35px;
+    border-radius: 6px;
+    background: white;
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.5);
+  }
+
+  @media (max-width: 768px) {
+    .swiper {
+      height: 180px;
+    }
+    .slide-title {
+      font-size: 1.2rem;
+    }
+    .slide-description {
+      font-size: 0.85rem;
+    }
+    .slide-image i {
+      font-size: 2.5rem !important;
+    }
+  }
+</style>
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script>
+  // Initialize Swiper
+  const swiper = new Swiper(".heroSwiper", {
+    loop: true,
+    autoplay: {
+      delay: 5000,
+      disableOnInteraction: false,
+    },
+    speed: 1000,
+    effect: "fade",
+    fadeEffect: {
+      crossFade: true,
+    },
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+  });
+</script>

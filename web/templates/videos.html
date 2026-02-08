@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Quản lý Video - Hệ thống giám sát giao thông{% endblock %}
+
+{% block content %}
+
+{% set title = "Quản lý Video" %}
+{% set subtitle = "Danh sách video giám sát và vi phạm" %}
+{% include 'includes/header.html' %}
+
+<div class="container mb-5">
+    
+    <div class="row g-4 mb-4">
+        <div class="col-md-4" data-aos="zoom-in">
+            <div class="stat-card primary">
+                <i class="fas fa-video"></i>
+                <h3>{{ videos|length }}</h3>
+                <p>Tổng số video</p>
+            </div>
+        </div>
+        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
+            <div class="stat-card success">
+                <i class="fas fa-hdd"></i>
+                <h3>{{ "%.1f"|format(videos|sum(attribute='size')) }} MB</h3>
+                <p>Tổng dung lượng</p>
+            </div>
+        </div>
+        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
+            <div class="stat-card danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>{{ videos|sum(attribute='violations') }}</h3>
+                <p>Tổng vi phạm phát hiện</p>
+            </div>
+        </div>
+    </div>
+
+    
+    {% if videos %}
+    <div class="card card-custom" data-aos="fade-up">
+        <div class="card-header card-header-custom">
+            <i class="fas fa-folder-open"></i> Danh sách video giám sát
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 50px;">#</th>
+                            <th><i class="fas fa-file-video"></i> Tên video</th>
+                            <th style="width: 120px;"><i class="fas fa-hdd"></i> Dung lượng</th>
+                            <th style="width: 120px;"><i class="fas fa-exclamation-circle"></i> Vi phạm</th>
+                            <th class="text-center" style="width: 200px;">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for video in videos %}
+                        <tr>
+                            <td class="text-center">{{ loop.index }}</td>
+                            <td>
+                                <strong>{{ video.name }}</strong>
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ video.size }} MB</span>
+                            </td>
+                            <td>
+                                {% if video.violations > 0 %}
+                                    <span class="badge bg-danger">{{ video.violations }} vi phạm</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Chưa có</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-primary" onclick="playVideo('{{ video.name }}', '{{ video.path }}')">
+                                    <i class="fas fa-play"></i> Xem
+                                </button>
+                                {% if video.violations > 0 %}
+                                <a href="/violations?search={{ video.name }}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-list"></i> Vi phạm
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="card card-custom" data-aos="fade-up">
+        <div class="card-body text-center p-5">
+            <i class="fas fa-inbox fa-3x mb-3 text-muted"></i>
+            <h5 class="text-muted">Chưa có video nào</h5>
+            <p class="text-muted">Thêm video vào thư mục VIDEOOO để bắt đầu giám sát</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+
+<div class="modal fade" id="videoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #1f2937, #111827); color: #fbbf24; border-bottom: 2px solid #fbbf24;">
+                <h5 class="modal-title" id="videoModalLabel">
+                    <i class="fas fa-video"></i> <span id="videoTitle"></span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <video id="videoPlayer" controls style="width: 100%; max-height: 500px; background: #000;">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .modal-content {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    [data-theme="dark"] .modal-content {
+        background: #1e293b;
+    }
+
+    [data-theme="dark"] .modal-header {
+        background: linear-gradient(135deg, #0f172a, #020617) !important;
+    }
+
+    [data-theme="dark"] .table {
+        color: #f1f5f9;
+    }
+</style>
+
+<script>
+    function playVideo(name, path) {
+        document.getElementById('videoTitle').textContent = name;
+        const videoPlayer = document.getElementById('videoPlayer');
+        videoPlayer.src = path;
+        videoPlayer.load();
+
+        const modal = new bootstrap.Modal(document.getElementById('videoModal'));
+        modal.show();
+
+        // Pause video when modal closes
+        document.getElementById('videoModal').addEventListener('hidden.bs.modal', function () {
+            videoPlayer.pause();
+            videoPlayer.currentTime = 0;
+        });
+    }
+</script>
+{% endblock %}

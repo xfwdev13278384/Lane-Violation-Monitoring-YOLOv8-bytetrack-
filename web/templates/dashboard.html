@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}Hệ thống giám sát giao thông{% endblock %}
+
+{% block content %}
+
+{% include 'includes/slider.html' %}
+
+<div class="container mb-5">
+    
+    <div class="row g-4 mb-5" data-aos="fade-up">
+        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
+            <div class="stat-card primary">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3 id="totalViolations">{{ stats.total }}</h3>
+                <p>Tổng số vi phạm</p>
+            </div>
+        </div>
+        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
+            <div class="stat-card success">
+                <i class="fas fa-car"></i>
+                <h3 id="carViolations">{{ stats.car }}</h3>
+                <p>Ô tô vi phạm</p>
+            </div>
+        </div>
+        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="300">
+            <div class="stat-card danger">
+                <i class="fas fa-motorcycle"></i>
+                <h3 id="motorViolations">{{ stats.motor }}</h3>
+                <p>Xe máy vi phạm</p>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="card card-custom" data-aos="fade-up">
+        <div class="card-header card-header-custom d-flex justify-content-between align-items-center">
+            <span><i class="fas fa-clock"></i> Vi phạm gần đây</span>
+            <span class="badge bg-success" id="realtimeIndicator">
+                <i class="fas fa-circle-notch fa-spin"></i> Live
+            </span>
+        </div>
+        <div class="card-body p-0">
+            <div id="recentViolationsContainer">
+                {% if recent %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="recentTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="text-center" style="width: 80px;">#ID</th>
+                                <th style="width: 150px;">Biển số</th>
+                                <th>Loại xe</th>
+                                <th>Hành vi vi phạm</th>
+                                <th style="width: 180px;">Thời gian</th>
+                                <th class="text-center" style="width: 200px;">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentTableBody">
+                            {% for v in recent %}
+                            <tr>
+                                <td class="text-center">
+                                    <span class="badge bg-primary">#{{ v.id }}</span>
+                                </td>
+                                <td>
+                                    <strong>{{ v.license_plate or "N/A" }}</strong>
+                                </td>
+                                <td>
+                                    {% if v.vehicle_type == 'car' %}
+                                        <span class="badge bg-success"><i class="fas fa-car"></i> Ô tô</span>
+                                    {% else %}
+                                        <span class="badge bg-danger"><i class="fas fa-motorcycle"></i> Xe máy</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ v.violation_type }}</td>
+                                <td><i class="far fa-clock"></i> {{ v.violation_time }}</td>
+                                <td class="text-center">
+                                    <a href="/violations/{{ v.id }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye"></i> Xem
+                                    </a>
+                                    <a href="/violations/{{ v.id }}/pdf" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-file-pdf"></i> PDF
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer bg-light text-end">
+                    <a href="/violations" class="btn btn-custom-primary">
+                        <i class="fas fa-arrow-right"></i> Xem tất cả vi phạm
+                    </a>
+                </div>
+                {% else %}
+                <div class="p-5 text-center text-muted">
+                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                    <p>Chưa có vi phạm nào được ghi nhận.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="row g-4 mt-4 justify-content-center">
+        <div class="col-md-5" data-aos="fade-up" data-aos-delay="100">
+            <div class="card card-custom h-100">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-list fa-3x text-primary mb-3"></i>
+                    <h5>Quản lý vi phạm</h5>
+                    <p class="text-muted">Xem danh sách đầy đủ các vi phạm đã ghi nhận</p>
+                    <a href="/violations" class="btn btn-custom-primary">
+                        <i class="fas fa-arrow-right"></i> Truy cập
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5" data-aos="fade-up" data-aos-delay="200">
+            <div class="card card-custom h-100">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-chart-bar fa-3x text-success mb-3"></i>
+                    <h5>Thống kê chi tiết</h5>
+                    <p class="text-muted">Xem biểu đồ và phân tích thống kê vi phạm</p>
+                    <a href="/statistics" class="btn btn-custom-primary">
+                        <i class="fas fa-arrow-right"></i> Truy cập
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #realtimeIndicator {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .new-violation {
+        animation: fadeIn 0.5s ease;
+        background: rgba(251, 191, 36, 0.1) !important;
+    }
+</style>
+
+<script>
+    // Realtime dashboard update
+    let updateInterval;
+
+    function updateStats() {
+        fetch('/api/stats')
+            .then(response => response.json())
+            .then(data => {
+                // Update stats with smooth animation
+                animateValue('totalViolations', parseInt(document.getElementById('totalViolations').textContent), data.total, 500);
+                animateValue('carViolations', parseInt(document.getElementById('carViolations').textContent), data.car, 500);
+                animateValue('motorViolations', parseInt(document.getElementById('motorViolations').textContent), data.motor, 500);
+            })
+            .catch(error => console.error('Error updating stats:', error));
+    }
+
+    function updateRecentViolations() {
+        fetch('/api/recent')
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.length > 0) {
+                    const tbody = document.getElementById('recentTableBody');
+                    if (tbody) {
+                        tbody.innerHTML = data.map(v => `
+                            <tr class="new-violation">
+                                <td class="text-center">
+                                    <span class="badge bg-primary">#${v.id}</span>
+                                </td>
+                                <td>
+                                    <strong>${v.license_plate || 'N/A'}</strong>
+                                </td>
+                                <td>
+                                    ${v.vehicle_type === 'car'
+                                        ? '<span class="badge bg-success"><i class="fas fa-car"></i> Ô tô</span>'
+                                        : '<span class="badge bg-danger"><i class="fas fa-motorcycle"></i> Xe máy</span>'}
+                                </td>
+                                <td>${v.violation_type}</td>
+                                <td><i class="far fa-clock"></i> ${v.violation_time}</td>
+                                <td class="text-center">
+                                    <a href="/violations/${v.id}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye"></i> Xem
+                                    </a>
+                                    <a href="/violations/${v.id}/pdf" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-file-pdf"></i> PDF
+                                    </a>
+                                </td>
+                            </tr>
+                        `).join('');
+
+                        // Remove animation class after animation completes
+                        setTimeout(() => {
+                            document.querySelectorAll('.new-violation').forEach(el => {
+                                el.classList.remove('new-violation');
+                            });
+                        }, 500);
+                    }
+                }
+            })
+            .catch(error => console.error('Error updating recent violations:', error));
+    }
+
+    function animateValue(id, start, end, duration) {
+        const element = document.getElementById(id);
+        if (!element) return;
+
+        const range = end - start;
+        const increment = range / (duration / 16);
+        let current = start;
+
+        const timer = setInterval(() => {
+            current += increment;
+            if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                current = end;
+                clearInterval(timer);
+            }
+            element.textContent = Math.round(current);
+        }, 16);
+    }
+
+    // Start real-time updates
+    updateInterval = setInterval(() => {
+        updateStats();
+        updateRecentViolations();
+    }, 10000); // Update every 10 seconds
+
+    // Stop updates when page is hidden
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            clearInterval(updateInterval);
+        } else {
+            updateInterval = setInterval(() => {
+                updateStats();
+                updateRecentViolations();
+            }, 10000);
+        }
+    });
+</script>
+{% endblock %}

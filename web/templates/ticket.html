@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Chi tiết vi phạm #{{ v.id }} - Hệ thống giám sát giao thông{% endblock %}
+
+{% block content %}
+
+{% set title = "Biên bản vi phạm #" ~ v.id if v else "Chi tiết vi phạm" %}
+{% set subtitle = "Chi tiết thông tin vi phạm giao thông" %}
+{% include 'includes/header.html' %}
+
+<div class="container mb-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto" data-aos="fade-up">
+            <div class="card card-custom">
+                <div class="card-header card-header-custom d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-info-circle"></i> Thông tin vi phạm</span>
+                    <button onclick="window.print()" class="btn btn-light btn-sm">
+                        <i class="fas fa-print"></i> In biên bản
+                    </button>
+                </div>
+                <div class="card-body p-4">
+                    {% if v %}
+                    
+
+
+                    <table class="table table-borderless">
+                        <tr>
+                            <td width="40%" class="fw-bold">Mã biên bản:</td>
+                            <td><span class="badge bg-primary">#{{ v.id }}</span></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Biển số xe:</td>
+                            <td><strong class="text-primary">{{ v.license_plate or "(chưa nhận dạng)" }}</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Loại phương tiện:</td>
+                            <td>
+                                {% if v.vehicle_type == 'car' %}
+                                    <span class="badge bg-success"><i class="fas fa-car"></i> Ô tô</span>
+                                {% else %}
+                                    <span class="badge bg-danger"><i class="fas fa-motorcycle"></i> Xe máy</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Hành vi vi phạm:</td>
+                            <td><span class="text-danger fw-bold">{{ v.violation_type }}</span></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Thời gian vi phạm:</td>
+                            <td><i class="far fa-clock"></i> {{ v.violation_time }}</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Nguồn video:</td>
+                            <td>
+                                {% if v.video_name %}
+                                    <code class="text-success">{{ v.video_name }}</code>
+                                {% else %}
+                                    <span class="text-muted">Không có thông tin</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Đường dẫn ảnh:</td>
+                            <td>
+                                {% if v.image_path %}
+                                    <code class="text-success">{{ v.image_path }}</code>
+                                {% else %}
+                                    <span class="text-muted">Không có ảnh</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Video minh chứng:</td>
+                            <td>
+                                {% if v.evidence_video %}
+                                    <span class="badge bg-success"><i class="fas fa-check-circle"></i> Đã có</span>
+                                {% else %}
+                                    <span class="badge bg-secondary"><i class="fas fa-times-circle"></i> Chưa có</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+
+                    {% if v.image_path %}
+                    <div class="text-center mb-4">
+                        <h6 class="text-muted mb-3"><i class="fas fa-image"></i> Ảnh minh chứng vi phạm</h6>
+                        <img src="/static/evidence/{{ v.image_path }}"
+                             alt="Ảnh bằng chứng vi phạm"
+                             class="img-fluid rounded shadow-sm"
+                             style="max-height: 400px; object-fit: contain;"
+                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect width=%22400%22 height=%22300%22 fill=%22%23f0f0f0%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2220%22%3EẢnh không tồn tại%3C/text%3E%3C/svg%3E'">
+                    </div>
+                    {% endif %}
+
+                    {% if v.evidence_video %}
+                    <div class="mb-4">
+                        <h6 class="text-muted mb-3"><i class="fas fa-video"></i> Video minh chứng vi phạm</h6>
+                        <video controls style="width: 100%; max-height: 500px; background: #000; border-radius: 10px;">
+                            <source src="/evidence-video/{{ v.evidence_video }}" type="video/mp4">
+                            Trình duyệt của bạn không hỗ trợ xem video.
+                        </video>
+                    </div>
+                    {% endif %}
+
+                    <div class="mt-4 d-flex gap-2 flex-wrap">
+                        <a href="/violations" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Quay lại
+                        </a>
+                        <a href="/violations/{{ v.id }}/pdf" class="btn btn-danger">
+                            <i class="fas fa-file-pdf"></i> Tải PDF
+                        </a>
+                        <a href="/violations/{{ v.id }}/upload-video" class="btn btn-custom-primary">
+                            <i class="fas fa-cloud-upload-alt"></i> {{ 'Cập nhật video' if v.evidence_video else 'Tải lên video' }}
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="text-center p-5">
+                        <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                        <h5>Không tìm thấy biên bản</h5>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style media="print">
+    .navbar-custom, .footer-custom, .btn, .header-section {
+        display: none !important;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,123 @@
+<div class="header-section">
+  <div class="header-background"></div>
+  <div class="container position-relative">
+    <div class="header-content animate__animated animate__fadeInDown">
+      {% block header_content %}
+      <h1>
+        <i class="fas fa-shield-alt"></i> {{ title | default('Hệ thống giám sát
+        vi phạm giao thông') }}
+      </h1>
+      <p>
+        {{ subtitle | default('Nền tảng AI giám sát thông minh - Bảo vệ an toàn
+        giao thông') }}
+      </p>
+      {% endblock %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .header-section {
+    position: relative;
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 50%, #0369a1 100%);
+    color: white;
+    padding: 4rem 0 3rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 6px 30px rgba(14, 165, 233, 0.3);
+    overflow: hidden;
+    border-bottom: none;
+  }
+
+  .header-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+      radial-gradient(
+        circle at 20% 50%,
+        rgba(255, 255, 255, 0.15) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 80% 80%,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 50%
+      ),
+      linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.05) 50%,
+        transparent 70%
+      );
+    animation: float 15s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+      opacity: 0.6;
+    }
+    50% {
+      transform: translateY(-20px) rotate(2deg);
+      opacity: 0.8;
+    }
+  }
+
+  .header-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+
+  .header-section h1 {
+    font-weight: 700;
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+    letter-spacing: -0.5px;
+    color: white;
+  }
+
+  .header-section p {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 400;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .header-section i {
+    animation: bounce 2s infinite;
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
+    font-size: 3rem;
+    display: inline-block;
+    margin-right: 0.5rem;
+  }
+
+  @keyframes bounce {
+    0%,
+    100% {
+      transform: translateY(0) scale(1);
+    }
+    50% {
+      transform: translateY(-10px) scale(1.05);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .header-section {
+      padding: 3rem 0 2rem;
+    }
+    .header-section h1 {
+      font-size: 1.8rem;
+    }
+    .header-section p {
+      font-size: 1rem;
+    }
+    .header-section i {
+      font-size: 2rem;
+    }
+  }
+</style>

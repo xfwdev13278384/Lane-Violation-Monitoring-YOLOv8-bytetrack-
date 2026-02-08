@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block title %}Tải lên Video Minh Chứng - Vi phạm #{{ violation.id }}{% endblock %}
+
+{% block content %}
+
+{% set title = "Tải lên Video Minh Chứng" %}
+{% set subtitle = "Upload video bằng chứng cho vi phạm #" ~ violation.id %}
+{% include 'includes/header.html' %}
+
+<div class="container mb-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto" data-aos="fade-up">
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' }}"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            
+            <div class="card card-custom mb-4">
+                <div class="card-header card-header-custom">
+                    <i class="fas fa-info-circle"></i> Thông tin vi phạm
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Mã biên bản:</strong> <span class="badge bg-primary">#{{ violation.id }}</span></p>
+                            <p><strong>Biển số:</strong> {{ violation.license_plate or "N/A" }}</p>
+                            <p><strong>Loại xe:</strong>
+                                {% if violation.vehicle_type == 'car' %}
+                                    <span class="badge bg-success">Ô tô</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Xe máy</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Vi phạm:</strong> {{ violation.violation_type }}</p>
+                            <p><strong>Thời gian:</strong> {{ violation.violation_time }}</p>
+                            <p><strong>Video hiện tại:</strong>
+                                {% if violation.evidence_video %}
+                                    <span class="badge bg-success"><i class="fas fa-check"></i> Đã có</span>
+                                {% else %}
+                                    <span class="badge bg-secondary"><i class="fas fa-times"></i> Chưa có</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="card card-custom">
+                <div class="card-header card-header-custom">
+                    <i class="fas fa-cloud-upload-alt"></i> Tải lên video minh chứng
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                        <div class="mb-4">
+                            <label for="video_file" class="form-label">
+                                <i class="fas fa-video"></i> Chọn file video
+                            </label>
+                            <input
+                                type="file"
+                                class="form-control form-control-lg"
+                                id="video_file"
+                                name="video_file"
+                                accept="video/mp4,video/avi,video/x-msvideo,video/x-matroska,video/quicktime"
+                                required
+                            >
+                            <div class="form-text">
+                                <i class="fas fa-info-circle"></i> Định dạng hỗ trợ: MP4, AVI, MKV, MOV. Dung lượng tối đa: 500MB
+                            </div>
+                        </div>
+
+                        <div id="fileInfo" class="alert alert-info d-none">
+                            <h6><i class="fas fa-file-video"></i> Thông tin file:</h6>
+                            <p class="mb-1"><strong>Tên:</strong> <span id="fileName"></span></p>
+                            <p class="mb-1"><strong>Kích thước:</strong> <span id="fileSize"></span></p>
+                            <p class="mb-0"><strong>Định dạng:</strong> <span id="fileType"></span></p>
+                        </div>
+
+                        <div id="uploadProgress" class="d-none mb-3">
+                            <div class="progress" style="height: 25px;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning"
+                                     role="progressbar"
+                                     style="width: 0%"
+                                     id="progressBar">
+                                    <span id="progressText">0%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-custom-primary btn-lg" id="uploadBtn">
+                                <i class="fas fa-upload"></i> Tải lên video
+                            </button>
+                            <a href="/violations/{{ violation.id }}" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-arrow-left"></i> Quay lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {% if violation.evidence_video %}
+            
+            <div class="card card-custom mt-4">
+                <div class="card-header card-header-custom">
+                    <i class="fas fa-eye"></i> Video hiện tại
+                </div>
+                <div class="card-body">
+                    <video controls style="width: 100%; max-height: 400px; background: #000;">
+                        <source src="/evidence-video/{{ violation.evidence_video }}" type="video/mp4">
+                        Trình duyệt của bạn không hỗ trợ xem video.
+                    </video>
+                    <p class="text-muted mt-2">
+                        <i class="fas fa-info-circle"></i> Upload video mới sẽ thay thế video hiện tại
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control-lg {
+        padding: 0.75rem;
+        font-size: 1.1rem;
+    }
+
+    #fileInfo {
+        background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.1));
+        border-left: 4px solid #fbbf24;
+    }
+</style>
+
+<script>
+    const fileInput = document.getElementById('video_file');
+    const fileInfo = document.getElementById('fileInfo');
+    const uploadForm = document.getElementById('uploadForm');
+    const uploadProgress = document.getElementById('uploadProgress');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const uploadBtn = document.getElementById('uploadBtn');
+
+    // Display file info when selected
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').textContent = formatBytes(file.size);
+            document.getElementById('fileType').textContent = file.type;
+            fileInfo.classList.remove('d-none');
+
+            // Validate file size
+            const maxSize = 500 * 1024 * 1024; // 500MB
+            if (file.size > maxSize) {
+                alert('File quá lớn! Kích thước tối đa là 500MB');
+                fileInput.value = '';
+                fileInfo.classList.add('d-none');
+            }
+        }
+    });
+
+    // Handle form submission with progress
+    uploadForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const file = fileInput.files[0];
+        if (!file) {
+            alert('Vui lòng chọn file video');
+            return;
+        }
+
+        const formData = new FormData(uploadForm);
+
+        // Show progress bar
+        uploadProgress.classList.remove('d-none');
+        uploadBtn.disabled = true;
+        uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tải lên...';
+
+        // Create XMLHttpRequest for progress tracking
+        const xhr = new XMLHttpRequest();
+
+        xhr.upload.addEventListener('progress', function(e) {
+            if (e.lengthComputable) {
+                const percentComplete = Math.round((e.loaded / e.total) * 100);
+                progressBar.style.width = percentComplete + '%';
+                progressText.textContent = percentComplete + '%';
+            }
+        });
+
+        xhr.addEventListener('load', function() {
+            if (xhr.status === 200) {
+                progressBar.classList.remove('progress-bar-animated');
+                progressBar.classList.add('bg-success');
+                progressText.textContent = 'Hoàn thành!';
+
+                setTimeout(function() {
+                    window.location.href = '/violations/{{ violation.id }}';
+                }, 1000);
+            } else {
+                alert('Lỗi khi tải lên video. Vui lòng thử lại.');
+                uploadBtn.disabled = false;
+                uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Tải lên video';
+                uploadProgress.classList.add('d-none');
+            }
+        });
+
+        xhr.addEventListener('error', function() {
+            alert('Lỗi kết nối. Vui lòng thử lại.');
+            uploadBtn.disabled = false;
+            uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Tải lên video';
+            uploadProgress.classList.add('d-none');
+        });
+
+        xhr.open('POST', '/violations/{{ violation.id }}/upload-video');
+        xhr.send(formData);
+    });
+
+    function formatBytes(bytes, decimals = 2) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+</script>
+{% endblock %}

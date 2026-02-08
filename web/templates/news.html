@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Tin tức giao thông - Hệ thống giám sát giao thông{% endblock %}
+
+{% block content %}
+
+{% set title = "Tin tức giao thông" %}
+{% set subtitle = "Cập nhật tin tức, chính sách và xu hướng giao thông mới nhất" %}
+{% include 'includes/header.html' %}
+
+<div class="container mb-5">
+    <div class="row g-4">
+        {% for article in articles %}
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 }}">
+            <div class="card card-custom h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <span class="badge badge-custom bg-primary">{{ article.category }}</span>
+                        <small class="text-muted"><i class="far fa-calendar"></i> {{ article.date }}</small>
+                    </div>
+                    <h5 class="card-title mb-3">
+                        <a href="/news/{{ article.id }}" class="text-decoration-none text-dark">
+                            {{ article.title }}
+                        </a>
+                    </h5>
+                    <p class="card-text text-muted">{{ article.summary }}</p>
+                    <a href="/news/{{ article.id }}" class="btn btn-custom-primary btn-sm mt-2">
+                        <i class="fas fa-arrow-right"></i> Đọc tiếp
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

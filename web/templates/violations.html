@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Quản lý vi phạm - Hệ thống giám sát giao thông{% endblock %}
+
+{% block content %}
+
+{% set title = "Quản lý vi phạm" %}
+{% set subtitle = "Danh sách đầy đủ các vi phạm giao thông đã ghi nhận" %}
+{% include 'includes/header.html' %}
+
+<div class="container mb-5">
+    
+    <div class="card card-custom mb-4" data-aos="fade-down">
+        <div class="card-body">
+            <h5 class="mb-3">
+                <i class="fas fa-filter"></i> Bộ lọc nâng cao
+                <span class="badge bg-primary ms-2">{{ total_count }} kết quả</span>
+            </h5>
+            <form method="GET" action="/violations">
+                <div class="row g-3">
+                    
+                    <div class="col-md-4">
+                        <label class="form-label"><i class="fas fa-car"></i> Loại xe</label>
+                        <select name="vehicle_type" class="form-select">
+                            <option value="">Tất cả loại xe</option>
+                            <option value="car" {% if vehicle_type == 'car' %}selected{% endif %}>Ô tô</option>
+                            <option value="motorcycle" {% if vehicle_type == 'motorcycle' %}selected{% endif %}>Xe máy</option>
+                        </select>
+                    </div>
+
+                    
+                    <div class="col-md-4">
+                        <label class="form-label"><i class="fas fa-exclamation-circle"></i> Loại vi phạm</label>
+                        <select name="violation_type" class="form-select">
+                            <option value="">Tất cả vi phạm</option>
+                            {% for vtype in all_violation_types %}
+                            <option value="{{ vtype.violation_type }}" {% if violation_type == vtype.violation_type %}selected{% endif %}>
+                                {{ vtype.violation_type }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    
+                    <div class="col-md-2">
+                        <label class="form-label"><i class="far fa-calendar"></i> Từ ngày</label>
+                        <input
+                            type="date"
+                            name="date_from"
+                            class="form-control"
+                            value="{{ date_from }}"
+                        >
+                    </div>
+
+                    
+                    <div class="col-md-2">
+                        <label class="form-label"><i class="far fa-calendar"></i> Đến ngày</label>
+                        <input
+                            type="date"
+                            name="date_to"
+                            class="form-control"
+                            value="{{ date_to }}"
+                        >
+                    </div>
+                </div>
+
+                <div class="mt-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-custom-primary">
+                        <i class="fas fa-search"></i> Áp dụng lọc
+                    </button>
+                    {% if vehicle_type or violation_type or date_from or date_to %}
+                    <a href="/violations" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Xóa bộ lọc
+                    </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    {% if violations %}
+    <div class="card card-custom" data-aos="fade-up">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center">#ID</th>
+                            <th>Biển số</th>
+                            <th>Loại xe</th>
+                            <th>Hành vi vi phạm</th>
+                            <th>Thời gian</th>
+                            <th class="text-center">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for v in violations %}
+                        <tr>
+                            <td class="text-center">
+                                <span class="badge bg-primary">#{{ v.id }}</span>
+                            </td>
+                            <td><strong>{{ v.license_plate or "N/A" }}</strong></td>
+                            <td>
+                                {% if v.vehicle_type == 'car' %}
+                                    <span class="badge bg-success"><i class="fas fa-car"></i> Ô tô</span>
+                                {% else %}
+                                    <span class="badge bg-danger"><i class="fas fa-motorcycle"></i> Xe máy</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ v.violation_type }}</td>
+                            <td><i class="far fa-clock"></i> {{ v.violation_time }}</td>
+                            <td class="text-center">
+                                <a href="/violations/{{ v.id }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-eye"></i> Xem
+                                </a>
+                                <a href="/violations/{{ v.id }}/pdf" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-file-pdf"></i> PDF
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        
+        {% if total_pages > 1 %}
+        <div class="card-footer bg-light">
+            <nav>
+                <ul class="pagination pagination-custom justify-content-center mb-0">
+                    {% if page > 1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page - 1 }}{% if search %}&search={{ search }}{% endif %}">
+                            <i class="fas fa-chevron-left"></i> Trước
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for p in range(1, total_pages + 1) %}
+                        {% if p == page %}
+                        <li class="page-item active"><span class="page-link">{{ p }}</span></li>
+                        {% elif (p >= page - 2 and p <= page + 2) or p == 1 or p == total_pages %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ p }}{% if search %}&search={{ search }}{% endif %}">{{ p }}</a>
+                        </li>
+                        {% elif p == page - 3 or p == page + 3 %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page < total_pages %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page + 1 }}{% if search %}&search={{ search }}{% endif %}">
+                            Sau <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            <p class="text-center text-muted mt-2 mb-0">Trang {{ page }} / {{ total_pages }}</p>
+        </div>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="card card-custom">
+        <div class="card-body p-5 text-center">
+            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+            <h5>Không tìm thấy kết quả</h5>
+            {% if search %}
+            <p class="text-muted">Không có vi phạm nào khớp với từ khóa "<strong>{{ search }}</strong>"</p>
+            {% else %}
+            <p class="text-muted">Chưa có vi phạm nào được ghi nhận trong hệ thống</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

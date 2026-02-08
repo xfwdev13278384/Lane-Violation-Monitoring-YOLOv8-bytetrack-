@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}{{ article.title }} - Tin tức giao thông{% endblock %}
+
+{% block content %}
+
+{% set title = article.title if article else "Tin tức" %}
+{% set subtitle = article.category if article else "Chi tiết bài viết" %}
+{% include 'includes/header.html' %}
+
+<div class="container mb-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto" data-aos="fade-up">
+            <div class="card card-custom">
+                <div class="card-body p-4 p-md-5">
+                    {% if article %}
+                    <div class="mb-4">
+                        <span class="badge badge-custom bg-primary me-2">{{ article.category }}</span>
+                        <small class="text-muted"><i class="far fa-calendar"></i> {{ article.date }}</small>
+                    </div>
+
+                    <h1 class="mb-4">{{ article.title }}</h1>
+
+                    <div class="article-content" style="line-height: 1.8; font-size: 1.1rem;">
+                        <p class="text-muted fs-5 mb-4">{{ article.get('summary', '') }}</p>
+
+                        <div class="mt-4">
+                            {{ article.content | replace('\n', '<br>') | safe }}
+                        </div>
+                    </div>
+
+                    <hr class="my-5">
+
+                    <div class="d-flex gap-2">
+                        <a href="/news" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Quay lại
+                        </a>
+                        <button onclick="window.print()" class="btn btn-outline-primary">
+                            <i class="fas fa-print"></i> In bài viết
+                        </button>
+                        <button onclick="navigator.share({title: '{{ article.title }}', url: window.location.href})" class="btn btn-outline-primary">
+                            <i class="fas fa-share-alt"></i> Chia sẻ
+                        </button>
+                    </div>
+
+                    {% else %}
+                    <div class="text-center p-5">
+                        <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                        <h5>Không tìm thấy bài viết</h5>
+                        <a href="/news" class="btn btn-custom-primary mt-3">
+                            <i class="fas fa-arrow-left"></i> Quay lại danh sách
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            
+            <div class="mt-4">
+                <h4 class="mb-3"><i class="fas fa-newspaper"></i> Tin tức khác</h4>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card card-custom">
+                            <div class="card-body">
+                                <small class="text-muted">Chính sách</small>
+                                <h6 class="mt-2"><a href="/news/4" class="text-decoration-none">Quy định mới về phạt nguội</a></h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card card-custom">
+                            <div class="card-body">
+                                <small class="text-muted">Công nghệ</small>
+                                <h6 class="mt-2"><a href="/news/2" class="text-decoration-none">Hệ thống AI giám sát thông minh</a></h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style media="print">
+    .navbar-custom, .footer-custom, .btn, .header-section, .breadcrumb, .badge {
+        display: none !important;
+    }
+</style>
+{% endblock %}

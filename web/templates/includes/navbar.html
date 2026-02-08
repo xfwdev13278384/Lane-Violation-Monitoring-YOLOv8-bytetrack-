@@ -1,0 +1,178 @@
+<nav
+  class="navbar navbar-expand-lg navbar-light navbar-custom fixed-top"
+  id="mainNavbar"
+>
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <i class="fas fa-shield-alt"></i>
+      <span>Hệ thống Giám Sát Phương Tiện Sai Làn</span>
+    </a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a
+            class="nav-link {% if request.path == '/' %}active{% endif %}"
+            href="/"
+          >
+            <i class="fas fa-home"></i> Trang chủ
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link {% if '/violations' in request.path %}active{% endif %}"
+            href="/violations"
+          >
+            <i class="fas fa-list"></i> Vi phạm
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link {% if '/statistics' in request.path %}active{% endif %}"
+            href="/statistics"
+          >
+            <i class="fas fa-chart-bar"></i> Thống kê
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div style="height: 76px"></div>
+
+<style>
+  .navbar-custom {
+    background: white;
+    box-shadow: 0 2px 20px rgba(14, 165, 233, 0.15);
+    padding: 1rem 0;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid var(--primary-color);
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+  }
+
+  .navbar-custom.navbar-hidden {
+    transform: translateY(-100%);
+  }
+
+  .navbar-custom.navbar-scrolled {
+    padding: 0.5rem 0;
+    box-shadow: 0 4px 25px rgba(14, 165, 233, 0.2);
+  }
+
+  .navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--primary-color) !important;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: transform 0.3s;
+    text-shadow: none;
+  }
+
+  .navbar-brand:hover {
+    transform: scale(1.05);
+    color: var(--primary-dark) !important;
+  }
+
+  .navbar-brand i {
+    font-size: 1.8rem;
+    animation: pulse 2s infinite;
+    color: var(--primary-color);
+    filter: drop-shadow(0 0 10px rgba(14, 165, 233, 0.3));
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+  }
+
+  .nav-link {
+    color: var(--dark-color) !important;
+    font-weight: 600;
+    padding: 0.5rem 1rem !important;
+    border-radius: 10px;
+    transition: all 0.3s;
+    margin: 0 0.25rem;
+    position: relative;
+  }
+
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--primary-color);
+    transition: all 0.3s;
+    transform: translateX(-50%);
+  }
+
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    width: 80%;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    background: rgba(14, 165, 233, 0.1);
+    color: var(--primary-color) !important;
+    transform: translateY(-2px);
+  }
+</style>
+
+<script>
+  // Advanced navbar show/hide on scroll
+  (function () {
+    let lastScrollTop = 0;
+    const navbar = document.getElementById("mainNavbar");
+    const scrollThreshold = 100;
+
+    window.addEventListener(
+      "scroll",
+      function () {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+
+        // Add scrolled class
+        if (scrollTop > 50) {
+          navbar.classList.add("navbar-scrolled");
+        } else {
+          navbar.classList.remove("navbar-scrolled");
+        }
+
+        // Hide/show navbar
+        if (scrollTop > scrollThreshold) {
+          if (scrollTop > lastScrollTop) {
+            // Scrolling down
+            navbar.classList.add("navbar-hidden");
+          } else {
+            // Scrolling up
+            navbar.classList.remove("navbar-hidden");
+          }
+        }
+
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+      },
+      false,
+    );
+  })();
+</script>

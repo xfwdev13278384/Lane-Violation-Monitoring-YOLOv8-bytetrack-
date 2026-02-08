@@ -1,0 +1,335 @@
+{% extends "base.html" %}
+
+{% block title %}Thống kê - Hệ thống giám sát giao thông{% endblock %}
+
+{% block content %}
+
+{% set title = "Thống kê vi phạm" %}
+{% set subtitle = "Phân tích và báo cáo vi phạm giao thông chi tiết" %}
+{% include 'includes/header.html' %}
+
+<div class="container mb-5">
+    
+    <div class="row g-4 mb-4">
+        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
+            <div class="stat-card primary">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>{{ stats.total }}</h3>
+                <p>Tổng số vi phạm</p>
+            </div>
+        </div>
+        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
+            <div class="stat-card success">
+                <i class="fas fa-car"></i>
+                <h3>{{ stats.car }}</h3>
+                <p>Ô tô vi phạm</p>
+            </div>
+        </div>
+        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="300">
+            <div class="stat-card danger">
+                <i class="fas fa-motorcycle"></i>
+                <h3>{{ stats.motor }}</h3>
+                <p>Xe máy vi phạm</p>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="row g-4 mb-4">
+        <div class="col-md-6" data-aos="fade-right">
+            <div class="card card-custom">
+                <div class="card-header card-header-custom">
+                    <i class="fas fa-chart-line"></i> Vi phạm 7 ngày gần nhất
+                </div>
+                <div class="card-body">
+                    <canvas id="dailyChart" style="height: 350px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6" data-aos="fade-left">
+            <div class="card card-custom">
+                <div class="card-header card-header-custom">
+                    <i class="fas fa-chart-area"></i> Vi phạm theo tháng
+                </div>
+                <div class="card-body">
+                    <canvas id="monthlyChart" style="height: 350px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="row g-4">
+        <div class="col-md-6" data-aos="fade-up">
+            <div class="card card-custom">
+                <div class="card-header card-header-custom">
+                    <i class="fas fa-chart-pie"></i> Phân loại theo phương tiện
+                </div>
+                <div class="card-body">
+                    <canvas id="vehicleChart" style="height: 350px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6" data-aos="fade-up">
+            <div class="card card-custom">
+                <div class="card-header card-header-custom">
+                    <i class="fas fa-chart-bar"></i> Vi phạm theo giờ trong ngày
+                </div>
+                <div class="card-body">
+                    <canvas id="hourlyChart" style="height: 350px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Configure Chart.js defaults
+    Chart.defaults.font.family = 'Inter, sans-serif';
+    Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--dark-color').trim();
+
+    // Daily Chart (Line)
+    const dailyCtx = document.getElementById('dailyChart');
+    const dailyData = {{ daily_stats | tojson }};
+    const dailyLabels = dailyData.map(d => d.date).reverse();
+    const dailyCounts = dailyData.map(d => d.count).reverse();
+
+    new Chart(dailyCtx, {
+        type: 'line',
+        data: {
+            labels: dailyLabels,
+            datasets: [{
+                label: 'Số vi phạm',
+                data: dailyCounts,
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#3b82f6',
+                pointBorderColor: 'white',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: '#3b82f6',
+                    titleColor: 'white',
+                    bodyColor: 'white',
+                    borderColor: '#2563eb',
+                    borderWidth: 2,
+                    padding: 12,
+                    displayColors: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                        color: '#64748b'
+                    },
+                    grid: {
+                        color: 'rgba(14, 165, 233, 0.1)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: '#64748b'
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+
+    // Monthly Chart (Bar)
+    const monthlyCtx = document.getElementById('monthlyChart');
+    const monthlyData = {{ monthly_stats | tojson }};
+    const monthlyLabels = monthlyData.map(d => d.month).reverse();
+    const monthlyCounts = monthlyData.map(d => d.count).reverse();
+
+    new Chart(monthlyCtx, {
+        type: 'bar',
+        data: {
+            labels: monthlyLabels,
+            datasets: [{
+                label: 'Số vi phạm',
+                data: monthlyCounts,
+                backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                borderColor: '#dc2626',
+                borderWidth: 2,
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: '#ef4444',
+                    titleColor: 'white',
+                    bodyColor: 'white',
+                    borderColor: '#dc2626',
+                    borderWidth: 2,
+                    padding: 12
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                        color: '#64748b'
+                    },
+                    grid: {
+                        color: 'rgba(239, 68, 68, 0.1)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: '#64748b'
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+
+    // Vehicle Type Chart (Doughnut)
+    const vehicleCtx = document.getElementById('vehicleChart');
+    new Chart(vehicleCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Ô tô', 'Xe máy'],
+            datasets: [{
+                data: [{{ stats.car }}, {{ stats.motor }}],
+                backgroundColor: ['#ef4444', '#fbbf24'],
+                borderColor: 'white',
+                borderWidth: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        font: {
+                            size: 14,
+                            weight: '500'
+                        },
+                        color: '#64748b'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#1f2937',
+                    titleColor: 'white',
+                    bodyColor: 'white',
+                    borderColor: '#64748b',
+                    borderWidth: 2,
+                    padding: 12
+                }
+            }
+        }
+    });
+
+    // Hourly Chart (Column/Bar)
+    const hourlyCtx = document.getElementById('hourlyChart');
+    const hourlyData = {{ hourly_stats | tojson }};
+
+    // Create array for all 24 hours with 0 count if no data
+    const hourlyLabels = [];
+    const hourlyCounts = [];
+    for (let i = 0; i < 24; i++) {
+        hourlyLabels.push(i + ':00');
+        const hourData = hourlyData.find(h => h.hour === i);
+        hourlyCounts.push(hourData ? hourData.count : 0);
+    }
+
+    new Chart(hourlyCtx, {
+        type: 'bar',
+        data: {
+            labels: hourlyLabels,
+            datasets: [{
+                label: 'Số vi phạm',
+                data: hourlyCounts,
+                backgroundColor: 'rgba(249, 115, 22, 0.8)',
+                borderColor: '#ea580c',
+                borderWidth: 2,
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: '#f97316',
+                    titleColor: 'white',
+                    bodyColor: 'white',
+                    borderColor: '#ea580c',
+                    borderWidth: 2,
+                    padding: 12,
+                    callbacks: {
+                        title: function(context) {
+                            return 'Giờ ' + context[0].label;
+                        },
+                        label: function(context) {
+                            return 'Số vi phạm: ' + context.parsed.y;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                        color: '#64748b'
+                    },
+                    grid: {
+                        color: 'rgba(249, 115, 22, 0.1)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: '#64748b',
+                        font: {
+                            size: 11
+                        }
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
