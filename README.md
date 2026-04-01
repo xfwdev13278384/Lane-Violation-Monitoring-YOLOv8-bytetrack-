@@ -35,7 +35,6 @@ python main.py
 cd web
 python app.py
 ```
-- Truy cập: http://localhost:5000
 
 ## 4. CHỨC NĂNG CHÍNH
 - **Trang chủ**: Tổng quan, vi phạm gần nhất
